@@ -1,0 +1,40 @@
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lab_online_course
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8005:80"
+    depends_on:
+      - mysql_db
+
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_db_lab_online_course
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_lab_online_course
+    volumes:
+      - db_data_lab_online_course:/var/lib/mysql
+      - ./db_lab_online_course.sql:/docker-entrypoint-initdb.d/database.sql:ro
+    ports:
+      - "3304:3306"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin_lab_online_course
+    depends_on:
+      - mysql_db
+    ports:
+      - "9005:80"
+    environment:
+      PMA_HOST: mysql_db
+      MYSQL_ROOT_PASSWORD: root
+    restart: always
+
+volumes:
+  db_data_lab_online_course:
